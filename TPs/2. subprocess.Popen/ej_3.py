@@ -34,12 +34,14 @@ try:
 
         if stdout.decode() != "":
             output_file.write(stdout.decode() + "\n")
-            output_file.close()
             log_file.write(time.strftime("%d/%m/%y") + " " + time.strftime("%H:%M:%S") +
                            ": Comando " + '"' + command + '"' + " ejecutado correctamente." + "\n")
 
         else:
             log_file.write(time.strftime("%d/%m/%y") + " " + time.strftime("%H:%M:%S") + ": " + stderr.decode() + "\n")
+
+        output_file.close()
+        log_file.close()
 
     except Exception as e:
         log_file = open(logFile, "a")
