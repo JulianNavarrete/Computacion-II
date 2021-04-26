@@ -2,6 +2,7 @@
 
 import os
 import getopt
+import time
 from sys import argv
 import signal
 
@@ -30,7 +31,9 @@ try:
                 if pid == 0:
                     signal.pause()
                 else:
+                    time.sleep(0.05)
                     print("Creando proceso:", str(pid))
+                    time.sleep(0.05)
                     os.kill(pid, signal.SIGUSR2)
 
     else:
