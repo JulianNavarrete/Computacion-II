@@ -2,30 +2,38 @@
 
 from multiprocessing import Process, Pipe
 from os import getpid
+import sys
 
 
 def ch1(w):
-    r.close()
-    for i in range(500):
+    sys.stdin = open(0)
+    while True:
         entrada = input("Ingrese un mensaje: ")
-        w.send(entrada)
-        w.close()
+        if entrada != "exit":
+            w.send(entrada)
+            w.recv()
+        else:
+            w.send(entrada)
+            exit(-1)
 
 
 def ch2(r):
-    w.close()
     while True:
         mensaje = r.recv()
-        r.close()
-        print("Leyendo(PID=" + str(getpid()) + ") leyendo:\n", mensaje)
+        if mensaje != "exit":
+            print("Leyendo (pid=" + str(getpid()) + "):", mensaje + "\n")
+            r.send("")
+        else:
+            print("\nMatando hijos...")
+            exit(-1)
 
 
 if __name__ == '__main__':
-    r, w = Pipe()
+    w, r = Pipe()
     p1 = Process(target=ch1, args=(w,))
     p2 = Process(target=ch2, args=(r,))
     p1.start()
     p2.start()
     p1.join()
     p2.join()
-    print("Hora de morir tambien... Bye... (x.x)")
+    print("Soy el padre, hora de morir tambien...")
