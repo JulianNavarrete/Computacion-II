@@ -1,28 +1,40 @@
 #!/usr/bin/python3
 
 from threading import Thread
-from multiprocessing import Queue
+from multiprocessing import Pipe
 from os import getpid
-import time
+import sys
 
 
-def funcion(num, q):
-    pid = str(getpid())
-    time.sleep(num/10)
-    print("Hilo", str(num) + ",", "PID del padre: " + pid)
-    time.sleep(num/2)
-    q.put(pid)
+def th1(w):
+    sys.stdin = open(0)
+    while True:
+        entrada = input("Ingrese un mensaje: ")
+        if entrada != "exit":
+            w.send(entrada)
+            w.recv()
+        else:
+            w.send(entrada)
+            exit(-1)
+
+
+def th2(r):
+    while True:
+        mensaje = r.recv()
+        if mensaje != "exit":
+            print("Leyendo (pid proceso principal = " + str(getpid()) + "):", mensaje + "\n")
+            r.send("")
+        else:
+            print("\nTerminando hilos...")
+            exit(-1)
 
 
 if __name__ == '__main__':
-    lista_hijos = []
-    q = Queue()
-    for num in range(10):
-        lista_hijos.append(Thread(target=funcion, args=(num, q), daemon=True))
-        lista_hijos[-1].start()
-    for i in lista_hijos:
-        i.join()
-    print("Escribiendo lista desde el padre:")
-    for i in range(10):
-        print(q.get())
-    print("Soy el padre, hora de morir...")
+    w, r = Pipe()
+    p1 = Thread(target=th1, args=(w,))
+    p2 = Thread(target=th2, args=(r,))
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
+    print("Soy el proceso principal, hora de morir...")
