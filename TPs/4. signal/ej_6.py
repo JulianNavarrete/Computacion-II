@@ -15,22 +15,23 @@ def handler2(s, f):
 
 signal.signal(signal.SIGUSR1, handler)
 signal.signal(signal.SIGUSR2, handler2)
-pid = os.fork()
+while True:
+    pid = os.fork()
 
-if pid == 0:
-    # Hijo1
-    for i in range(10):
-        os.kill(os.getppid(), signal.SIGUSR1)
-        print("Soy el hijo1 con PID = " + str(os.getpid()) + ": ping")
-        time.sleep(5)
+    if pid == 0:
+        # Hijo1
+        for i in range(10):
+            os.kill(os.getppid(), signal.SIGUSR1)
+            print("Soy el hijo1 con PID = " + str(os.getpid()) + ": ping")
+            time.sleep(5)
 
-else:
-    pid2 = os.fork()
-    if pid2 == 0:
-        # Hijo2
-        while True:
-            signal.pause()
     else:
-        # Padre
-        while True:
-            signal.pause()
+        pid2 = os.fork()
+        if pid2 == 0:
+            # Hijo2
+            while True:
+                signal.pause()
+        else:
+            # Padre
+            while True:
+                signal.pause()
