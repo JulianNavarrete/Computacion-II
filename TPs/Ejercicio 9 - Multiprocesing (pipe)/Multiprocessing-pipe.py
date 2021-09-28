@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from multiprocessing import Process, Pipe
-from os import pipe, getpid, fdopen
+from os import getpid
 
 
 def ch1(w):
