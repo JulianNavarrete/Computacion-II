@@ -6,8 +6,8 @@ from os import pipe, getpid, fdopen
 
 def ch1(w):
     r.close()
-    while True:
-        entrada = input(str("Ingress un mensaje: "))
+    for i in range(500):
+        entrada = input("Ingrese un mensaje: ")
         w.send(entrada)
         w.close()
 
