@@ -3,9 +3,10 @@
 import socket
 import sys
 import getopt
+import signal
 
 
-host = ""
+host = "localhost"
 port = 8000
 
 
@@ -25,6 +26,7 @@ except:
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((host, port))
-msg = input("Introduzca una cadena de texto: ").encode("ascii")
-s.send(msg)
-print(s.recv(1024).decode("ascii"))
+msg = input("Introduzca una cadena de texto: ")
+s.send(msg.encode('utf-8'))
+print("Mensaje recibido del server:", s.recv(1024).decode('utf-8'))
+print("Cerrando conexión...")

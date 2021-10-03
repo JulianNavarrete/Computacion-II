@@ -5,7 +5,7 @@ import sys
 import getopt
 
 
-host = ""
+host = "localhost"
 port = 8000
 
 
@@ -23,14 +23,17 @@ except:
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-print("Esperando conexiones...")
-
 s.bind((host, port))
 s.listen(1)
 
-clientsocket = s.accept()
-print("Tengo una conexión de", str(clientsocket[1]))
-resp = "Hola"
-s.send(resp.encode("ascii"))
-print(resp)
+print("Esperando conexiones...")
+
+clientsocket, addr = s.accept()
+print("Tengo una conexión de", str(addr))
+msg = clientsocket.recv(1024).decode('utf-8')
+resp = msg.upper()
+clientsocket.send(resp.encode('utf-8'))
+print("Enviando", resp, "al cliente...")
+print("Cerrando conexión...")
+clientsocket.close()
 s.close()
