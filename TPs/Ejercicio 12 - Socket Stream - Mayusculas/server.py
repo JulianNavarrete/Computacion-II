@@ -23,7 +23,7 @@ except:
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-s.bind((host, port))
+s.bind((host, int(port)))
 s.listen(1)
 
 print("Esperando conexiones...")
