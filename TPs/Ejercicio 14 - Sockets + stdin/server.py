@@ -37,7 +37,7 @@ def udp(h, p):
 
     print("Texto recibido, escribiendo en archivo...")
     with open(file_out, "w") as file:
-        file.writelines(str(msg))
+        file.writelines(str(msg.decode('utf-8')))
 
     print("Cerrando conexión...")
     # clientsocket.close()

@@ -6,7 +6,7 @@ import getopt
 
 
 def udp(h, p):
-    print(h, p)
+    print("Protocolo UDP elegido.")
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     except:
@@ -29,6 +29,7 @@ def udp(h, p):
 
 
 def tcp(h, p):
+    print("Protocolo TCP elegido.")
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((h, int(p)))
     msg = ""
