@@ -6,7 +6,7 @@ import getopt
 
 
 host = "localhost"
-port = 8000
+port = 8080
 protocol = ""
 file_out = '/tmp/ej-14-server.txt'
 
@@ -31,21 +31,18 @@ def udp(h, p):
 
 def tcp(h, p):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
     s.bind((h, int(p)))
     s.listen(1)
-
     print("Esperando conexiones...")
 
     clientsocket, addr = s.accept()
     print("Tengo una conexión de", str(addr))
     msg = clientsocket.recv(1024).decode('utf-8')
 
+    print("Texto recibido, escribiendo en archivo...")
     with open(file_out, "w") as file:
         file.writelines(msg)
 
-    # clientsocket.send(resp.encode('utf-8'))
-    # print("Enviando", resp, "al cliente...")
     print("Cerrando conexión...")
     clientsocket.close()
     s.close()
