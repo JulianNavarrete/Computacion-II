@@ -8,7 +8,7 @@ import signal
 
 
 def handler(s, f):
-    print("Soy el PID ", os.getpid(), ", recibí la señal ", str(s), " de mi padre PID ", os.getppid())
+    print("Soy el PID", os.getpid(), ", recibí la señal", str(s), "de mi padre PID", os.getppid())
 
 
 signal.signal(signal.SIGUSR2, handler)
