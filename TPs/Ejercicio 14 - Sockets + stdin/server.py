@@ -26,7 +26,22 @@ except:
 
 
 def udp(h, p):
-    pass
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.bind((h, int(p)))
+    # s.listen(1)
+    print("Esperando conexiones...")
+
+    msg, addr = s.recvfrom(1024)
+    print("Tengo una conexión de", str(addr))
+    # msg = clientsocket.recv(1024).decode('utf-8')
+
+    print("Texto recibido, escribiendo en archivo...")
+    with open(file_out, "w") as file:
+        file.writelines(str(msg))
+
+    print("Cerrando conexión...")
+    # clientsocket.close()
+    s.close()
 
 
 def tcp(h, p):

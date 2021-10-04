@@ -3,27 +3,29 @@
 import socket
 import sys
 import getopt
-import signal
-
-host = "localhost"
-port = 8080
-protocol = ""
-
-try:
-    (opt, arg) = getopt.getopt(sys.argv[1:], 'p:a:t:')
-    for args in opt:
-        if args[0] == '-p':
-            port = args[1]
-        if args[0] == '-a':
-            host = args[1]
-        if args[0] == '-t':
-            protocol = args[1]
-except:
-    print("Error de parámetros.")
 
 
 def udp(h, p):
-    pass
+    print(h, p)
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    except:
+        print("Error en crear socket")
+        sys.exit()
+
+    msg = ""
+    print("Ingrese texto:")
+    while True:
+        try:
+            cadena = input(">>> ")
+            msg = msg + cadena + "\n"
+        except:
+            break
+    try:
+        s.sendto(msg.encode(), (h, int(p)))
+        print("\nDatos enviados, cerrando conexión...")
+    except Exception as e:
+        print("\nError:", e)
 
 
 def tcp(h, p):
@@ -42,6 +44,22 @@ def tcp(h, p):
 
 
 if __name__ == '__main__':
+    host = "localhost"
+    port = 8080
+    protocol = ""
+
+    try:
+        (opt, arg) = getopt.getopt(sys.argv[1:], 'p:a:t:')
+        for args in opt:
+            if args[0] == '-p':
+                port = args[1]
+            if args[0] == '-a':
+                host = args[1]
+            if args[0] == '-t':
+                protocol = args[1]
+    except:
+        print("Error de parámetros.")
+
     if protocol == "tcp":
         tcp(host, port)
     elif protocol == "udp":
