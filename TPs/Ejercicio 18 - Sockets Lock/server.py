@@ -44,7 +44,8 @@ if __name__ == '__main__':
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, int(port)))
     s.listen(5)
-    os.remove("/tmp/ej-18.txt")
+    if os.path.exists("/tmp/ej-18.txt"):
+        os.remove("/tmp/ej-18.txt")
     print("Esperando conexiones...")
     while True:
         clientsocket, addr = s.accept()
