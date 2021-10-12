@@ -45,7 +45,7 @@ if __name__ == '__main__':
     except:
         print("Error de parámetros.")
 
-    addres = (host, port)
+    addr = (host, port)
 
     if multi == "p":
 
@@ -56,19 +56,19 @@ if __name__ == '__main__':
         socketserver.TCPServer.allow_reuse_address = True
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        while True:
-            with ForkingTCPServer((host, port), MyTCPHandler) as server:
-                # server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                # s.bind((host, int(port)))
-                server.serve_forever()
-                print("Esperando conexiones...")
-                # clientsocket, addr = server.accept()
-                # print("Tengo una conexión de", str(addr))
-                # server_fork = multiprocessing.Process(target=server.serve_forever)
-
+        with ForkingTCPServer((host, port), MyTCPHandler) as server:
+            # server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # s.bind((host, int(port)))
+            server.serve_forever()
+            print("Esperando conexiones...")
+            # clientsocket, addr = server.accept()
+            # print("Tengo una conexión de", str(addr))
+            # server_fork = multiprocessing.Process(target=server.serve_forever)
+            while True:
                 # server_fork.daemon = True
                 # server_fork.start()
-                server_fork = multiprocessing.Process(target=MyTCPHandler.child, args=(clientsocket, addr))
+                server_fork = multiprocessing.Process(target=MyTCPHandler.child, args=(server, addr))
+                server_fork.daemon = True
                 server_fork.start()
 
                 # server_fork = multiprocessing.Process(target=server.serve_forever)
@@ -76,12 +76,11 @@ if __name__ == '__main__':
                 # server_fork.daemon = True
                 # server_fork.start()
                 # server.shutdown()
-                server.handle_request()
-                #        server.serve_forever()
-                server.shutdown()
+                # server.handle_request()
+            #        server.serve_forever()
 
     elif multi == "t":
-        class ForkedTCPServer(socketserver.ForkingMixIn, socketserver.TCPServer):
+        class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             pass
     else:
         print("Parámetro -m incorrecto.")
@@ -92,6 +91,6 @@ if __name__ == '__main__':
     # server_fork.daemon = True
     # server_fork.start()
     # server.shutdown()
-    server.handle_request()
+    # server.handle_request()
     #        server.serve_forever()
-    server.shutdown()
+    # server.shutdown()
