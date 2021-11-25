@@ -30,23 +30,23 @@ def rotarImagen():
     for x in range(alto_img):
         col_salida -= 1
         for y in range(ancho_img):
-            matriz_roja_salida[y][col_salida] = matriz_roja_entrada[x][y]
+            matriz_roja_salida[y, col_salida] = matriz_roja_entrada[x, y]
 
     col_salida = alto_img
     for x in range(alto_img):
         col_salida -= 1
         for y in range(ancho_img):
-            matriz_verde_salida[y][col_salida] = matriz_verde_entrada[x][y]
+            matriz_verde_salida[y, col_salida] = matriz_verde_entrada[x, y]
 
     col_salida = alto_img
     for x in range(alto_img):
         col_salida -= 1
         for y in range(ancho_img):
-            matriz_azul_salida[y][col_salida] = matriz_azul_entrada[x][y]
+            matriz_azul_salida[y, col_salida] = matriz_azul_entrada[x, y]
 
     for x in range(alto_img):
         for y in range(ancho_img):
-            matriz_final[x][y] = (matriz_roja_salida[x][y][0], matriz_verde_salida[x][y][1], matriz_azul_salida[x][y][2])
+            matriz_final[x, y][] = (matriz_roja_salida[x, y][0], matriz_verde_salida[x, y][1], matriz_azul_salida[x, y][2])
 
     img_final = Image.fromarray(np.uint8(matriz_final))
     Image.Image.show(img_final)
