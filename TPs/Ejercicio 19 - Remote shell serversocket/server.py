@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
+
 import socket
 import socketserver
 import subprocess
-import multiprocessing
 import threading
 import sys
 import getopt
@@ -13,6 +13,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     # @staticmethod
     def child(self, cs, a):
+        sock, addr = cs
         while True:
             msg = cs.recv(1024).decode('utf-8')
             if msg != "exit":
@@ -27,9 +28,19 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
             else:
                 cs.close()
-                s.close()
+                # s.close()
                 print("Conexión cerrada", a)
                 break
+
+
+'''
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+
+class ForkedTCPServer(socketserver.ForkingMixIn, socketserver.TCPServer):
+    pass
+'''
 
 
 if __name__ == '__main__':
@@ -52,45 +63,33 @@ if __name__ == '__main__':
         class ForkingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer, ):
             pass
 
-        # server = ForkingTCPServer(addres, MyTCPHandler)
-        socketserver.TCPServer.allow_reuse_address = True
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        with ForkingTCPServer((host, port), MyTCPHandler) as server:
-            # server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # s.bind((host, int(port)))
-            server.serve_forever()
-            print("Esperando conexiones...")
-            # clientsocket, addr = server.accept()
-            # print("Tengo una conexión de", str(addr))
-            # server_fork = multiprocessing.Process(target=server.serve_forever)
-            while True:
-                # server_fork.daemon = True
-                # server_fork.start()
-                server_fork = multiprocessing.Process(target=MyTCPHandler.child, args=(server, addr))
-                server_fork.daemon = True
-                server_fork.start()
-
-                # server_fork = multiprocessing.Process(target=server.serve_forever)
-
-                # server_fork.daemon = True
-                # server_fork.start()
-                # server.shutdown()
-                # server.handle_request()
-            #        server.serve_forever()
+        server = ForkingTCPServer(addr, MyTCPHandler)
 
     elif multi == "t":
+
         class ThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
             pass
+
+        server = ThreadingTCPServer(addr, MyTCPHandler)
+
     else:
         print("Parámetro -m incorrecto.")
 
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    cliente = s.accept()
+    thread = threading.Thread(target=server.serve_forever, args=(cliente,))
+    thread.setDaemon(True)
+    thread.start()
+    ip, port = ('localhost', 0)
+    s.connect((ip, port))
+    sock, addr = cliente
 
-    # server_fork = multiprocessing.Process(target=server.serve_forever)
-
-    # server_fork.daemon = True
-    # server_fork.start()
-    # server.shutdown()
-    # server.handle_request()
-    #        server.serve_forever()
-    # server.shutdown()
+    while True:
+        msg = input("Ingrese un mensaje: ")
+        s.send(msg.encode('utf-8'))
+        data = s.recv(1024).decode('utf-8')
+        print(data)
+        if msg == 'exit':
+            server.shutdown()
+            s.close()
+            server.socket.close()
