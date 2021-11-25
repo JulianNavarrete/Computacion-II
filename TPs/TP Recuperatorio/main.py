@@ -17,11 +17,12 @@ def rotarImagen():
     matriz_azul_salida = np.empty((alto_img, ancho_img))
     matriz_final = np.empty((alto_img, ancho_img))
 
+    col_salida = alto_img
+    fil_salida = ancho_img
     for x in range(alto_img):
-        col = ancho_img - 5
+        col_salida -= 1
         for y in range(ancho_img):
-            matriz_roja_entrada[(x - 1), (y - 1)] = matriz_roja_salida[(y - 1), int(col)]
-        col = - 1
+            matriz_roja_entrada[x-1][y-1] = matriz_roja_salida[y-1][col_salida]
 
     # print(matriz_roja_entrada)
 
