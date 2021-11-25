@@ -1,29 +1,30 @@
 from PIL import Image
+import numpy as np
 
 
 def rotarImagen():
     # ubic = str(input("Ingrese el nombre de la imagen con su respectiva extensión: "))
     ubic = "yacht.ppm"
     im = Image.open(ubic)
-    im_copia = im
+    alto_img = im.size[0]
+    ancho_img = im.size[1]
 
-    matriz_roja = []
-    matriz_verde = []
-    matriz_azul = []
+    matriz_roja_entrada = np.empty((ancho_img, alto_img))
+    matriz_verde_entrada = np.empty((ancho_img, alto_img))
+    matriz_azul_entrada = np.empty((ancho_img, alto_img))
+    matriz_roja_salida = np.empty((alto_img, ancho_img))
+    matriz_verde_salida = np.empty((alto_img, ancho_img))
+    matriz_azul_salida = np.empty((alto_img, ancho_img))
+    matriz_final = np.empty((alto_img, ancho_img))
 
-    for i in range(im_copia.size[0]):
-        matriz_roja.append([0] * im_copia.size[1])
-        matriz_verde.append([0] * im_copia.size[1])
-        matriz_azul.append([0] * im_copia.size[1])
+    for x in range(alto_img):
+        col = ancho_img - 5
+        for y in range(ancho_img):
+            matriz_roja_entrada[(x - 1), (y - 1)] = matriz_roja_salida[(y - 1), int(col)]
+        col = - 1
 
-    for i in range(im_copia.size[0]):
-        for j in range(im_copia.size[1]):
-            r, g, b = im_copia.getpixel((i, j))
-            matriz_roja[i][j] = r
-            matriz_verde[i][j] = g
-            matriz_azul[i][j] = b
+    # print(matriz_roja_entrada)
 
 
 if __name__ == '__main__':
     rotarImagen()
-
