@@ -27,17 +27,18 @@ def calc(op, num1, num2):
 
 
 def child(cs, a):
-    while True:
-        op = cs.recv(1024).decode('utf-8')
-        cs.send("ok".encode('utf-8'))
-        num1 = cs.recv(1024).decode('utf-8')
-        cs.send("ok".encode('utf-8'))
-        num2 = cs.recv(1024).decode('utf-8')
-        cs.send("ok".encode('utf-8'))
-        print("Parámertos recibidos con éxito.")
-        print("Realizando operación...")
-        oper = calc(op, num1, num2)
-        cs.send(str(oper).encode('utf-8'))
+    op = cs.recv(1024).decode('utf-8')
+    cs.send("ok".encode('utf-8'))
+    num1 = cs.recv(1024).decode('utf-8')
+    cs.send("ok".encode('utf-8'))
+    num2 = cs.recv(1024).decode('utf-8')
+    cs.send("ok".encode('utf-8'))
+    print("Parámertos recibidos con éxito.")
+    print("Realizando operación...")
+    oper = calc(op, num1, num2)
+    cs.send(str(oper).encode('utf-8'))
+    cs.close()
+    print("Conexión con", a, "cerrada.")
 
 
 if __name__ == "__main":
