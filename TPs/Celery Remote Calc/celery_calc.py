@@ -1,6 +1,6 @@
 from celery import Celery
 
-app = Celery('operations', backend='redis://localhost:6379', broker='redis://localhost:6379')
+app = Celery('celery_calc', backend='redis://localhost:6379', broker='redis://localhost:6379')
 
 
 @app.task

@@ -4,13 +4,40 @@ import socket
 from sys import argv
 from getopt import getopt
 from multiprocessing import Process
+import celery_calc as cc
+
+
+def calc(op, num1, num2):
+    try:
+        if op == "suma":
+            result = cc.suma.delay(int(num1), int(num2))
+        elif op == "resta":
+            result = cc.resta.delay(int(num1), int(num2))
+        elif op == "mult":
+            result = cc.mult.delay(int(num1), int(num2))
+        elif op == "div":
+            result = cc.div.delay(int(num1), int(num2))
+        elif op == "pot":
+            result = cc.pot.delay(int(num1), int(num2))
+        else:
+            return "Operación inválido."
+        return result.get()
+    except Exception as e:
+        return e
 
 
 def child(cs, a):
-    pass
-
-
-
+    while True:
+        op = cs.recv(1024).decode('utf-8')
+        cs.send("ok".encode('utf-8'))
+        num1 = cs.recv(1024).decode('utf-8')
+        cs.send("ok".encode('utf-8'))
+        num2 = cs.recv(1024).decode('utf-8')
+        cs.send("ok".encode('utf-8'))
+        print("Parámertos recibidos con éxito.")
+        print("Realizando operación...")
+        oper = calc(op, num1, num2)
+        cs.send(str(oper).encode('utf-8'))
 
 
 if __name__ == "__main":
@@ -35,4 +62,3 @@ if __name__ == "__main":
         print("Tengo una conexión de", str(addr))
         p = Process(target=child, args=(clientsocket, addr))
         p.start()
-
