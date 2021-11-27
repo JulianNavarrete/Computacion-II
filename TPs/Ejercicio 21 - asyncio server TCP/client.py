@@ -5,7 +5,6 @@ import sys
 import getopt
 from datetime import datetime as dt
 
-
 host = "localhost"
 port = 8000
 log_file = ""

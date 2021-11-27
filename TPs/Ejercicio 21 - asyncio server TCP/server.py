@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import asyncio
 import socket
 import subprocess
@@ -27,6 +28,7 @@ async def function(cs, a):
 async def main():
     host = "localhost"
     port = 8000
+    lista_tasks = []
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, int(port)))
@@ -35,12 +37,11 @@ async def main():
     while True:
         clientsocket, addr = s.accept()
         print("Tengo una conexión de", str(addr))
+        task = asyncio.create_task(function(clientsocket, addr))
+        lista_tasks.append(task)
+        await lista_tasks
 
 
-        '''
-        p = Process(target=child, args=(clientsocket, addr))
-        p.start()
-        '''
 
 
 asyncio.run(main())
