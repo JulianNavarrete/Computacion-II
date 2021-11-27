@@ -1,47 +1,36 @@
 #!/usr/bin/python3
 
 import asyncio
-import socket
 import subprocess
 
 
-async def function(cs, a):
-    while True:
-        msg = cs.recv(1024).decode('utf-8')
-        if msg != "exit":
-            res = subprocess.Popen([msg], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            std_out, std_err = res.communicate()
-            if std_out != "":
-                msg = "\nOK\n" + std_out
-            if std_err != "":
-                msg = "\nERROR\n" + std_err
+async def function(r, w):
+    addr = w.get_extra_info('peername')
+    print("Tengo una conexión de", str(addr))
+    msg = await (r.read(20)).decode('utf-8')
+    if msg != "exit":
+        res = subprocess.Popen([msg], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        std_out, std_err = res.communicate()
+        if std_out != "":
+            msg = "\nOK\n" + std_out
+        if std_err != "":
+            msg = "\nERROR\n" + std_err
 
-            cs.send(msg.encode('utf-8'))
-
-        else:
-            cs.close()
-            # s.close()
-            print("Conexión cerrada", a)
-            break
+        w.write(msg.encode('utf-8'))
+        await w.drain()
+    else:
+        w.close()
+        print("Conexión cerrada", addr)
 
 
 async def main():
     host = "localhost"
     port = 8000
-    lista_tasks = []
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((host, int(port)))
-    s.listen(5)
     print("Esperando conexiones...")
-    while True:
-        clientsocket, addr = s.accept()
-        print("Tengo una conexión de", str(addr))
-        task = asyncio.create_task(function(clientsocket, addr))
-        lista_tasks.append(task)
-        await lista_tasks
+    s = await asyncio.start_server(function, host, port)
+    async with s:
+        await s.serve_forever()
 
 
-
-
-asyncio.run(main())
+if __name__ == '__main__':
+    asyncio.run(main())
